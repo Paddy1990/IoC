@@ -11,7 +11,7 @@ namespace IoC.Container.Models
 
 	public class ConcreteOptions
 	{
-		public string Match { get; set; } //Use Match Constants - name of parameter in the constructor?
+		public string Match { get; set; }
 		public string LifeCycle { get; set; }
 	}
 }

@@ -39,18 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Constants\LifeCycle.cs" />
     <Compile Include="Constants\Match.cs" />
     <Compile Include="FluentApi\IocBuilder2.cs" />
-    <Compile Include="FluentApi\FluentApiConcreteModel.cs" />
     <Compile Include="FluentApi\IocBuilder.cs" />
-    <Compile Include="FluentApi\FluentApiLifeCycleModel.cs" />
     <Compile Include="FluentApi\IocConcreteBuilder.cs" />
     <Compile Include="FluentApi\IocLifeCycleBuilder.cs" />
     <Compile Include="IocContainer.cs" />
     <Compile Include="Models\ConcreteType.cs" />
-    <Compile Include="Models\IocContainerModel.cs" />
     <Compile Include="Models\RegisteredType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

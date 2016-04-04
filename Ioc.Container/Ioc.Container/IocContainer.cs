@@ -120,6 +120,6 @@ namespace IoC.Container
 
 	public interface IContainer
 	{
-
+		TContract Resolve<TContract>() where TContract : class;
 	}
 }

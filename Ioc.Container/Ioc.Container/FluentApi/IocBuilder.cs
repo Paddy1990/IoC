@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using IoC.Container.Models;
-using Ioc.Container.Constants;
 
 namespace IoC.Container.FluentApi
 {
