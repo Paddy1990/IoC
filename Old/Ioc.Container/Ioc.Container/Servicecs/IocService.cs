@@ -10,9 +10,9 @@ namespace Ioc.Container.Servicecs
 {
 	public class IocService : IIocService
 	{
-		internal FluentIocConcreteModel ConcreteExtension;
+		internal FluentApiConcreteModel ConcreteExtension;
 
-		public RegisteredType RegisterType<TContract>() where TContract : class
+		public RegisteredType AddRegisteredType<TContract>() where TContract : class
 		{
 			return new RegisteredType
 			{
@@ -23,17 +23,17 @@ namespace Ioc.Container.Servicecs
 
 		public ConcreteType AddConcreteType<TConcrete>(string lifeCycle) where TConcrete : class
 		{
-			 return new ConcreteType
+			return new ConcreteType
 			{
 				Type = typeof (TConcrete),
 				LifeCycle = lifeCycle
-			}
+			};
 		}
 
 	}
 
 	public interface IIocService
 	{
-		RegisteredType RegisterType<TContract>() where TContract : class;
+		RegisteredType AddRegisteredType<TContract>() where TContract : class;
 	}
 }

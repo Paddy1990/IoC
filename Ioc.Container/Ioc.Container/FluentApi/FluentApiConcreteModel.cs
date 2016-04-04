@@ -1,31 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using IoC.Container.Constants;
+using IoC.Container.Models;
 using Ioc.Container.Constants;
-using Ioc.Container.Models;
+using Ioc.Container.FluentApi;
 
-namespace Ioc.Container.FluentApi
+namespace IoC.Container.FluentApi
 {
-	public class FluentIocConcreteModel
+	public class FluentApiConcreteModel
 	{
-		internal readonly FluentIoc FluentIoc;
+		internal readonly IocBuilder IocBuilder;
 		
 		internal List<RegisteredType> RegisteredTypes { get; set; }
 		internal RegisteredType RegisteredType { get; set; }
-		internal FluentIocLifeCycleModel LifeCycleModel { get; set; } 
+		internal FluentApiLifeCycleModel LifeCycleModel { get; set; } 
 
-		public FluentIocConcreteModel(FluentIoc fluentIoc)
+		public FluentApiConcreteModel(IocBuilder iocBuilder)
 		{
-			FluentIoc = fluentIoc;
+			IocBuilder = iocBuilder;
 			RegisteredTypes = new List<RegisteredType>();
-			LifeCycleModel = new FluentIocLifeCycleModel(this);
+			LifeCycleModel = new FluentApiLifeCycleModel(this);
 		}
 
-		public FluentIocLifeCycleModel ForConcrete<TConcrete>(string lifeCycle = LifeCycle.Transient) where TConcrete : class
+		public FluentApiLifeCycleModel ForConcrete<TConcrete>(string lifeCycle = LifeCycle.Transient) where TConcrete : class
 		{
 			LifeCycleModel.ConcreteTypeModel = new ConcreteType
 			{
 				Type = typeof (TConcrete),
-				LifeCycle = lifeCycle
+				Options = new ConcreteOptions
+				{
+					LifeCycle = lifeCycle,
+					Match = Match.ByName
+				}
 			};
 
 			RegisteredType.Concrete.Add(LifeCycleModel.ConcreteTypeModel);

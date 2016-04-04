@@ -3,30 +3,30 @@ using Ioc.Container.Models;
 
 namespace Ioc.Container.FluentApi
 {
-	public class FluentIocLifeCycleModel
+	internal class FluentApiLifeCycleModel
 	{
-		internal readonly FluentIocConcreteModel FluentIocLifeCycle;
+		internal readonly FluentApiConcreteModel FluentApiLifeCycle;
 
 		internal ConcreteType ConcreteTypeModel { get; set; }
 
-		public FluentIocLifeCycleModel(FluentIocConcreteModel fluentIocLifeCycle)
+		public FluentApiLifeCycleModel(FluentApiConcreteModel fluentApiLifeCycle)
 		{
-			FluentIocLifeCycle = fluentIocLifeCycle;
+			FluentApiLifeCycle = fluentApiLifeCycle;
 		}
 
-		public FluentIocLifeCycleModel AsSingleton()
+		public FluentApiLifeCycleModel AsSingleton()
 		{
 			ConcreteTypeModel.LifeCycle = LifeCycle.Singleton;
 			return this;
 		}
 
-		public FluentIocLifeCycleModel AsTransient()
+		public FluentApiLifeCycleModel AsTransient()
 		{
 			ConcreteTypeModel.LifeCycle = LifeCycle.Transient;
 			return this;
 		}
 
-		public FluentIocLifeCycleModel PerRequest()
+		public FluentApiLifeCycleModel PerRequest()
 		{
 			ConcreteTypeModel.LifeCycle = LifeCycle.PerRequest;
 			return this;

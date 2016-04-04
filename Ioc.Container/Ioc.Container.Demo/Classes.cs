@@ -1,63 +1,57 @@
-﻿namespace Ioc.Container.Demo
+﻿namespace IoC.Container.Demo
 {
 	public class Class1 : IClass1
 	{
-		public string HelloWorld(string name)
+		private readonly IClass2 _class2;
+		private readonly IClass3 _class3;
+
+		public Class1(IClass2 class2, IClass3 class3)
 		{
-			return string.Format("Hello {0}!", name);
+			_class2 = class2;
+			_class3 = class3;
+		}
+
+		public string Write(string firstName, string lastName)
+		{
+			return string.Format("First Name: {0} - Last Name: {1}", _class2.Write(firstName), _class3.Write(lastName));
+		}
+	}
+
+	public class Class2 : IClass2
+	{
+		private readonly IClass3 _class3;
+
+		public Class2(IClass3 class3)
+		{
+			_class3 = class3;
+		}
+
+		public string Write(string text)
+		{
+			return _class3.Write(text);
+		}
+	}
+
+	public class Class3 : IClass3
+	{
+		public string Write(string text)
+		{
+			return string.Format("Hello {0}", text);
 		}
 	}
 
 	public interface IClass1
 	{
-		string HelloWorld(string name);
-	}
-
-	public class Class2 : IClass2
-	{
-		private readonly IClass1 _class1;
-
-		public Class2(IClass1 class1)
-		{
-			_class1 = class1;
-		}
-
-		public string HelloWorld(string name)
-		{
-			return string.Format("Hello {0}!", _class1.HelloWorld(name));
-		}
+		string Write(string firstName, string lastName);
 	}
 
 	public interface IClass2
 	{
-		string HelloWorld(string name);
-	}
-
-
-	public class Class3 : IClass3
-	{
-		private readonly IClass1 _class1;
-		private readonly IClass2 _class2;
-
-		public Class3(IClass1 class1, IClass2 class2)
-		{
-			_class1 = class1;
-			_class2 = class2;
-		}
-
-		public Class3(IClass1 class1)
-		{
-			_class1 = class1;
-		}
-
-		public string HelloWorld(string name)
-		{
-			return string.Format("Class1: {0}! Class2: {1}", _class1.HelloWorld("Paddy"), _class2.HelloWorld("Halle"));
-		}
+		string Write(string text);
 	}
 
 	public interface IClass3
 	{
-		string HelloWorld(string name);
+		string Write(string text);
 	}
 }

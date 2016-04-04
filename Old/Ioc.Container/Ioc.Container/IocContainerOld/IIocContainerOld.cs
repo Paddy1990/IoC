@@ -1,6 +1,6 @@
-﻿namespace Ioc.Container.IocContainer
+﻿namespace Ioc.Container.IocContainerOld
 {
-	public interface IIocContainer
+	public interface IIocContainerOld
 	{
 		void Register<TContract, TConcrete>();
 		void Register<TContract, TConcrete>(string lifeCycle);

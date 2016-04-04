@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IoC.Container.Models
+namespace Ioc.Container.Models
 {
 	public class RegisteredType
 	{

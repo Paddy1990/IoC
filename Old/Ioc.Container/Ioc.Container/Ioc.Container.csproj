@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{01CA708C-B506-4106-9590-F81D6D6BDD54}</ProjectGuid>
+    <ProjectGuid>{CE6C3E63-D4E9-4EE3-89D7-E70209D8E0CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IoC.Container</RootNamespace>
-    <AssemblyName>IoC.Container</AssemblyName>
+    <RootNamespace>Ioc.Container</RootNamespace>
+    <AssemblyName>Ioc.Container</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,20 +39,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Constants\LifeCycle.cs" />
-    <Compile Include="Constants\Match.cs" />
-    <Compile Include="FluentApi\IocBuilder2.cs" />
-    <Compile Include="FluentApi\FluentApiConcreteModel.cs" />
-    <Compile Include="FluentApi\IocBuilder.cs" />
-    <Compile Include="FluentApi\FluentApiLifeCycleModel.cs" />
-    <Compile Include="FluentApi\IocConcreteBuilder.cs" />
-    <Compile Include="FluentApi\IocLifeCycleBuilder.cs" />
+    <Compile Include="Classes.cs" />
+    <Compile Include="FluentApiModel.cs" />
     <Compile Include="IocContainer.cs" />
     <Compile Include="Models\ConcreteType.cs" />
-    <Compile Include="Models\IocContainerModel.cs" />
-    <Compile Include="Models\RegisteredType.cs" />
+    <Compile Include="FluentApi\FluentApi.cs" />
+    <Compile Include="FluentApi\FluentApiConcreteModel.cs" />
+    <Compile Include="FluentApi\FluentApiLifeCycleModel.cs" />
+    <Compile Include="IocContainerOld\IIocContainerOld.cs" />
+    <Compile Include="IocContainerOld\IocContainerOld.cs" />
+    <Compile Include="Constants\LifeCycle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\RegisteredType.cs" />
+    <Compile Include="Servicecs\IocService.cs" />
+    <Compile Include="Servicecs\Resolve.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ioc.Container.FluentApi\Ioc.Container.FluentApi.csproj">
+      <Project>{83C8A514-B02C-488B-A0B9-FA483720466E}</Project>
+      <Name>Ioc.Container.FluentApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FluentApi\Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

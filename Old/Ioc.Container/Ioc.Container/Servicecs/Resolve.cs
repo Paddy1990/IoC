@@ -3,42 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Ioc.Container.Constants;
+using Ioc.Container.FluentApi;
 using Ioc.Container.Models;
-using Ioc.Container.Servicecs;
 
-namespace Ioc.Container.FluentApi
+namespace Ioc.Container.Servicecs
 {
-	public class FluentIoc
+	public class Resolve
 	{
-		internal FluentIocConcreteModel ConcreteModel;
-		private readonly IIocService _iocService;
+		private readonly FluentApiConcreteModel _concreteExtension;
 
-		public FluentIoc()
+		public Resolve(FluentApiConcreteModel concreteExtension)
 		{
-			ConcreteModel = new FluentIocConcreteModel(this);
-			_iocService = new IocService();
-		}
-
-		public FluentIocConcreteModel RegisterType<TContract>() where TContract : class
-		{
-			ConcreteModel.RegisteredType = _iocService.RegisterType<TContract>();
-			return ConcreteModel;
-		}
-
-//		public FluentIocConcreteModel UseContract<TContract>() where TContract : class
-//		{
-//			ConcreteModel.RegisteredType = new RegisteredType
-//			{
-//				Contract = typeof(TContract),
-//				Concrete = new List<ConcreteType>()
-//			};
-//
-//			return ConcreteModel;
-//		}
-
-		public TContract Resolve<TContract>() where TContract : class
-		{
-			return (TContract)ResolveType(typeof(TContract));
+			_concreteExtension = concreteExtension;
 		}
 
 		private object ResolveType(Type type)
@@ -80,7 +56,7 @@ namespace Ioc.Container.FluentApi
 			concreteType.Instance = Activator.CreateInstance(concreteType.Type);
 			return concreteType.Instance;
 		}
-		
+
 		private List<object> ResolveDependancyChain(IEnumerable<ParameterInfo> ctorParameters)
 		{
 			//Loop around the constructor parameters and recursively loopthrough the dependancy chain.
@@ -97,7 +73,7 @@ namespace Ioc.Container.FluentApi
 
 			//look for the constructor that has the highest count of parameters
 			var ctorParams = ctorList.Where(w =>
-			                                w.GetParameters().Length == ctorList.Max(m => m.GetParameters().Length)).ToList();
+											w.GetParameters().Length == ctorList.Max(m => m.GetParameters().Length)).ToList();
 
 			//If theres more than one, we throw an exception because there you don't know which concrete type to create an instance for.
 			//TODO: Add the ability to resolve multiple concrete types to one contract. 
@@ -107,7 +83,7 @@ namespace Ioc.Container.FluentApi
 			if (ctorParams.Count() > 1)
 				throw new Exception(
 					string.Format("There are two many constructors to resolve the following concrete type: {0}. " +
-					              "Please Specify which constructor to use.", type));
+								  "Please Specify which constructor to use.", type));
 
 			//There should always be at least one constructor so we are safe to use .First()
 			return ctorParams.First();
@@ -115,7 +91,7 @@ namespace Ioc.Container.FluentApi
 
 		private RegisteredType GetRegisteredType(Type type)
 		{
-			var registeredType = ConcreteModel.RegisteredTypes.FirstOrDefault(x => x.Contract == type);
+			var registeredType = _concreteExtension.RegisteredTypes.FirstOrDefault(x => x.Contract == type);
 
 			if (registeredType == null)
 				throw new Exception("Type not registered: " + type);

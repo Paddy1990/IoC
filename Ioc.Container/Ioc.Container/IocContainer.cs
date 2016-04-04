@@ -2,33 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using IoC.Container.FluentApi;
+using IoC.Container.Models;
 using Ioc.Container.Constants;
-using Ioc.Container.FluentApi;
-using Ioc.Container.Models;
 
-namespace Ioc.Container.Servicecs
+namespace IoC.Container
 {
-	public class Resolve
+	public class IocContainer : IContainer
 	{
-		private readonly FluentIocConcreteModel _concreteExtension;
+		private Dictionary<Type, List<ConcreteType>> RegisteredTypes { get; set; }
 
-		public Resolve(FluentIocConcreteModel concreteExtension)
+		private IocContainer()
 		{
-			_concreteExtension = concreteExtension;
+			RegisteredTypes = new Dictionary<Type, List<ConcreteType>>();
 		}
 
+		public IocContainer(
+			Action<IocBuilder> func) : this()
+		{
+			var fluentContainer = new IocBuilder(RegisteredTypes);
+
+			if (func != null)
+				func.Invoke(fluentContainer);
+		}
+
+		public TContract Resolve<TContract>() where TContract : class
+		{
+			return (TContract)ResolveType(typeof(TContract));
+		}
+		
 		private object ResolveType(Type type)
 		{
 			var registeredType = GetRegisteredType(type);
 
 			//TODO: Add ability to allow registering multiple concrete type to one interface.
-			var concrete = registeredType.Concrete.First();
+			var concrete = registeredType.Value.First();
 
 			var constructor = GetConstructor(concrete.Type);
 
 			var arguments = constructor.GetParameters();
 
-			if (concrete.LifeCycle == LifeCycle.Singleton)
+			if (concrete.Options.LifeCycle == LifeCycle.Singleton)
 			{
 				if (concrete.Instance == null)
 				{
@@ -38,9 +52,9 @@ namespace Ioc.Container.Servicecs
 				else return concrete.Instance;
 			}
 
-			if (concrete.LifeCycle == LifeCycle.Transient)
+			if (concrete.Options.LifeCycle == LifeCycle.Transient)
 			{
-				//If we have no parameters then we have come to the bottom of one of the dependancy chains.
+				//If we have no parameters then we have come to the bottom of one of the dependancy chain.
 				//Here we create a new instance of the concrete type
 				if (arguments.Length == 0)
 					return CreateInstance(concrete);
@@ -59,7 +73,7 @@ namespace Ioc.Container.Servicecs
 
 		private List<object> ResolveDependancyChain(IEnumerable<ParameterInfo> ctorParameters)
 		{
-			//Loop around the constructor parameters and recursively loopthrough the dependancy chain.
+			//Loop around the constructor parameters and recursively loop through the dependancy chain.
 			var parameters = new List<object>();
 			foreach (var parameterInfo in ctorParameters)
 				parameters.Add(ResolveType(parameterInfo.ParameterType));
@@ -73,7 +87,7 @@ namespace Ioc.Container.Servicecs
 
 			//look for the constructor that has the highest count of parameters
 			var ctorParams = ctorList.Where(w =>
-											w.GetParameters().Length == ctorList.Max(m => m.GetParameters().Length)).ToList();
+				w.GetParameters().Length == ctorList.Max(m => m.GetParameters().Length)).ToList();
 
 			//If theres more than one, we throw an exception because there you don't know which concrete type to create an instance for.
 			//TODO: Add the ability to resolve multiple concrete types to one contract. 
@@ -89,16 +103,23 @@ namespace Ioc.Container.Servicecs
 			return ctorParams.First();
 		}
 
-		private RegisteredType GetRegisteredType(Type type)
+		private KeyValuePair<Type, List<ConcreteType>> GetRegisteredType(Type type)
 		{
-			var registeredType = _concreteExtension.RegisteredTypes.FirstOrDefault(x => x.Contract == type);
+			var registeredType = RegisteredTypes.FirstOrDefault(x => x.Key == type);
 
-			if (registeredType == null)
+			if (registeredType.Equals(default(KeyValuePair<Type, List<ConcreteType>>)))
 				throw new Exception("Type not registered: " + type);
 
-			if (!registeredType.Concrete.Any())
+			if (!registeredType.Value.Any())
 				throw new Exception("Type doesn't have a concrete type: " + type);
+
 			return registeredType;
 		}
+
+	}
+
+	public interface IContainer
+	{
+
 	}
 }

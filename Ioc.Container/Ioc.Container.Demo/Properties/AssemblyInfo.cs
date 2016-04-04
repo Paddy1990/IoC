@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Ioc.Container.Demo")]
+[assembly: AssemblyTitle("IoC.Container.Demo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Ioc.Container.Demo")]
+[assembly: AssemblyProduct("IoC.Container.Demo")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c53e3ca1-d019-4356-9f36-735adcae78cb")]
+[assembly: Guid("0556bc59-de10-4e4b-bd3d-d6d996a84a92")]
 
 // Version information for an assembly consists of the following four values:
 //

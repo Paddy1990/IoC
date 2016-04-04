@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using Ioc.Container.Constants;
 using Ioc.Container.Models;
 
-namespace Ioc.Container.IocContainer
+namespace Ioc.Container.IocContainerOld
 {
-	public class IocContainer : IIocContainer
+	public class IocContainerOld : IIocContainerOld
 	{
 		private IDictionary<Type, ConcreteType> _registeredTypes;
 
-		public IocContainer()
+		public IocContainerOld()
 		{
 			_registeredTypes = new Dictionary<Type, ConcreteType>();
 		}

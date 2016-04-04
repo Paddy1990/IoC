@@ -1,22 +1,26 @@
 ﻿using System;
-using Ioc.Container.FluentApi;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using IoC.Container.FluentApi;
 
-namespace Ioc.Container.Demo
+namespace IoC.Container.Demo
 {
 	class Program
 	{
 		static void Main(string[] args)
 		{
-			var c = new FluentIoc();
+			var container = new IocContainer(x =>
+			{
+				x.RegisterType<IClass1>().ForConcrete<Class1>().AsSingleton();
+				x.RegisterType<IClass2>().ForConcrete<Class2>().AsTransient();
+				x.RegisterType<Class3>().ForConcrete<Class3>();
+			});
 
-			c.RegisterType<IClass1>().ForConcrete<Class1>().AsSingleton();
-			c.RegisterType<IClass2>().ForConcrete<Class2>().AsTransient();
-			c.RegisterType<IClass3>().ForConcrete<Class3>();
-			
-			
-			var class3 = c.Resolve<IClass3>();
+			var class1 = container.Resolve<IClass1>();
 
-			Console.WriteLine(class3.HelloWorld("Paddy"));
+			Console.WriteLine(class1.Write("Paddy", "Halle"));
 			Console.ReadLine();
 		}
 	}
