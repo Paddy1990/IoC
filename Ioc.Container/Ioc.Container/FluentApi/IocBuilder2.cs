@@ -32,10 +32,8 @@ namespace IoC.Container.FluentApi
 			_concreteType = new ConcreteType
 			{
 				Type = typeof (TConcrete),
-				Options = new ConcreteOptions
-				{
+				
 					LifeCycle = lifeCycle
-				}
 			};
 
 			Type.Concrete.Add(_concreteType);

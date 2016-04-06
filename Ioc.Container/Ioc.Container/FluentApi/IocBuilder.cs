@@ -9,39 +9,33 @@ namespace IoC.Container.FluentApi
 	{
 		internal Dictionary<Type, List<ConcreteType>> RegisteredTypes;
 
-		internal RegisteredType TypeContext;
-		internal ConcreteType ConcreteTypeContext;
+//		internal RegisteredType TypeContext { get; set; }
+//		internal ConcreteType ConcreteTypeContext { get; set; }
 
 		public IocBuilder(Dictionary<Type, List<ConcreteType>> registeredTypes)
 		{
 			RegisteredTypes = registeredTypes;
 		}
 
-		public IocConcreteBuilder RegisterType<TContract>()
+		public IocConcreteBuilder Register<TContract>()
 			where TContract : class
 		{
-			return Register(typeof(TContract));
+			return RegisterType(typeof(TContract));
 		}
 
-		private IocConcreteBuilder Register(Type type)
+		private IocConcreteBuilder RegisterType(Type type)
 		{
-			//Should I throw an error here or just return the container?
-			if (RegisteredTypes.Any(x => x.Key == type))
-				throw new Exception(string.Format("The Type '{0}' has already been registered!", type.FullName));
-//				return this;
+			var typeContext = new RegisteredType {Contract = type, Concrete = new List<ConcreteType>()};
 
-			ConcreteTypeContext = new ConcreteType();
-
-			TypeContext = new RegisteredType
+			if (RegisteredTypes.ContainsKey(type))
 			{
-				Contract = type,
-				Concrete = new List<ConcreteType>()
-			};
+				typeContext.Concrete = RegisteredTypes[type];
+				return new IocConcreteBuilder(this, typeContext);
+			}
 
-			//Not sure if I should add the contract to the Dictionary here or wait until the UseConcrete method is called?
-			//			_registeredTypes.Add(Type.Contract, Type.Concrete);
-
-			return new IocConcreteBuilder(this);
+			RegisteredTypes.Add(typeContext.Contract, typeContext.Concrete);
+			
+			return new IocConcreteBuilder(this, typeContext);
 		}
 	}
 }

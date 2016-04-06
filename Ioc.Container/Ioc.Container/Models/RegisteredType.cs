@@ -7,5 +7,6 @@ namespace IoC.Container.Models
 	{
 		public Type Contract { get; set; }
 		public List<ConcreteType> Concrete { get; set; }
+		public string LifeCycle { get; set; }
 	}
 }

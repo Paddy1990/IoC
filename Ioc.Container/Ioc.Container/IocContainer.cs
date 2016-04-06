@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -17,13 +18,17 @@ namespace IoC.Container
 			RegisteredTypes = new Dictionary<Type, List<ConcreteType>>();
 		}
 
-		public IocContainer(
-			Action<IocBuilder> func) : this()
+		public IocContainer(Action<IocBuilder> func) : this()
 		{
 			var fluentContainer = new IocBuilder(RegisteredTypes);
 
 			if (func != null)
 				func.Invoke(fluentContainer);
+		}
+
+		public TContract Register<TContract, TConcrete>() where TContract : class
+		{
+			throw new NotImplementedException();
 		}
 
 		public TContract Resolve<TContract>() where TContract : class
@@ -33,33 +38,57 @@ namespace IoC.Container
 		
 		private object ResolveType(Type type)
 		{
-			var registeredType = GetRegisteredType(type);
+			if (type.IsGenericType && 
+				type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			{
+				var concreteTypes = GetConcreteTypes(type.GetGenericArguments().First());
+				return ResolveList(concreteTypes, type);
+			}
 
-			//TODO: Add ability to allow registering multiple concrete type to one interface.
-			var concrete = registeredType.Value.First();
+			var registeredType = GetConcreteTypes(type);
 
-			var constructor = GetConstructor(concrete.Type);
+			var concrete = registeredType.First();
+			return InvokeConstructor(concrete);
+		}
+
+		private IEnumerable ResolveList(IEnumerable<ConcreteType> concreteTypes, Type type)
+		{
+			var concrete = new List<object>();
+			foreach (var implementation in concreteTypes)
+				concrete.Add(InvokeConstructor(implementation));
+
+			var a = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
+
+			a.Add(concrete);
+
+			return a;
+		}
+
+		private object InvokeConstructor(ConcreteType concreteType)
+		{
+			var constructor = GetConstructor(concreteType.Type);
 
 			var arguments = constructor.GetParameters();
 
-			if (concrete.Options.LifeCycle == LifeCycle.Singleton)
+			if (concreteType.LifeCycle == LifeCycle.Singleton)
 			{
-				if (concrete.Instance == null)
+				if (concreteType.Instance == null)
 				{
 					if (arguments.Length == 0)
-						return CreateInstance(concrete);
+						return CreateInstance(concreteType);
 				}
-				else return concrete.Instance;
+				else return concreteType.Instance;
 			}
 
-			if (concrete.Options.LifeCycle == LifeCycle.Transient)
+			if (concreteType.LifeCycle == LifeCycle.Transient)
 			{
 				//If we have no parameters then we have come to the bottom of one of the dependancy chain.
 				//Here we create a new instance of the concrete type
 				if (arguments.Length == 0)
-					return CreateInstance(concrete);
+					return CreateInstance(concreteType);
 			}
 
+//			var dependancies = ResolveDependancyChain<TContract>(arguments);
 			var dependancies = ResolveDependancyChain(arguments);
 
 			return constructor.Invoke(dependancies.ToArray());
@@ -103,23 +132,24 @@ namespace IoC.Container
 			return ctorParams.First();
 		}
 
-		private KeyValuePair<Type, List<ConcreteType>> GetRegisteredType(Type type)
+		private List<ConcreteType> GetConcreteTypes(Type type)
 		{
-			var registeredType = RegisteredTypes.FirstOrDefault(x => x.Key == type);
+			var registeredType = RegisteredTypes.FirstOrDefault(x => x.Key == type).Value;
 
-			if (registeredType.Equals(default(KeyValuePair<Type, List<ConcreteType>>)))
+			if (registeredType == null)
 				throw new Exception("Type not registered: " + type);
 
-			if (!registeredType.Value.Any())
+			if (!registeredType.Any())
 				throw new Exception("Type doesn't have a concrete type: " + type);
 
 			return registeredType;
 		}
-
 	}
 
 	public interface IContainer
 	{
+		TContract Register<TContract, TConcrete>() where TContract : class;
+
 		TContract Resolve<TContract>() where TContract : class;
 	}
 }

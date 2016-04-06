@@ -6,12 +6,13 @@ namespace IoC.Container.Models
 	{
 		public Type Type { get; set; }
 		public Object Instance { get; set; }
-		public ConcreteOptions Options { get; set; }
+		public string LifeCycle { get; set; }
+//		public ConcreteOptions Options { get; set; }
 	}
 
-	public class ConcreteOptions
-	{
-		public string Match { get; set; }
-		public string LifeCycle { get; set; }
-	}
+//	public class ConcreteOptions
+//	{
+//		public string Match { get; set; }
+//		public string LifeCycle { get; set; }
+//	}
 }

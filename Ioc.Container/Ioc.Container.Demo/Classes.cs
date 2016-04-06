@@ -1,11 +1,14 @@
-﻿namespace IoC.Container.Demo
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace IoC.Container.Demo
 {
 	public class Class1 : IClass1
 	{
-		private readonly IClass2 _class2;
+		private readonly IEnumerable<IClass2> _class2;
 		private readonly IClass3 _class3;
 
-		public Class1(IClass2 class2, IClass3 class3)
+		public Class1(IEnumerable<IClass2> class2, IClass3 class3)
 		{
 			_class2 = class2;
 			_class3 = class3;
@@ -13,7 +16,7 @@
 
 		public string Write(string firstName, string lastName)
 		{
-			return string.Format("First Name: {0} - Last Name: {1}", _class2.Write(firstName), _class3.Write(lastName));
+			return string.Format("First Name: {0} - Last Name: {1}", _class2.First().Write(firstName), _class3.Write(lastName));
 		}
 	}
 
@@ -33,6 +36,14 @@
 	}
 
 	public class Class3 : IClass3
+	{
+		public string Write(string text)
+		{
+			return string.Format("Hello {0}", text);
+		}
+	}
+
+	public class Class4 : IClass2
 	{
 		public string Write(string text)
 		{

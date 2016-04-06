@@ -15,7 +15,7 @@ namespace Ioc.Container.Demo
 
 			c.Register(_ =>
 			{
-				_.RegisterType<IClass1>().ForConcrete<Class1>().AsSingleton();
+				_.RegisterType<IClass1>().ForConcrete<Class1>()..AsSingleton();
 				_.RegisterType<IClass2>().ForConcrete<Class2>().AsTransient();
 				_.RegisterType<IClass3>().ForConcrete<Class3>();
 			});

@@ -12,33 +12,56 @@ namespace IoC.Container.FluentApi
 
 		private readonly Dictionary<Type, List<ConcreteType>> _registeredTypes;
 		private readonly RegisteredType _typeContext;
-		private ConcreteType _concreteType;
 
-		public IocConcreteBuilder(IocBuilder iocBuilder)
+		public IocConcreteBuilder(IocBuilder iocBuilder, RegisteredType typeContext)
 		{
 			_iocBuilder = iocBuilder;
 
 			_registeredTypes = iocBuilder.RegisteredTypes;
-			_typeContext = iocBuilder.TypeContext;
-			_concreteType = iocBuilder.ConcreteTypeContext;
+			_typeContext = typeContext;
 		}
 
-		public IocLifeCycleBuilder ForConcrete<TConcrete>(string lifeCycle = LifeCycle.Transient) where TConcrete : class
+//		public IocLifeCycleBuilder ForConcrete<TConcrete>(string lifeCycle = LifeCycle.Transient) where TConcrete : class
+		public IocConcreteBuilder Concrete<TConcrete>() where TConcrete : class
 		{
-			_concreteType.Type = typeof (TConcrete);
-			_concreteType.Options = new ConcreteOptions
+			var concreteType = new ConcreteType
 			{
-				LifeCycle = lifeCycle
+				Type = typeof(TConcrete),
+				LifeCycle = LifeCycle.Transient
 			};
 
-			_typeContext.Concrete.Add(_concreteType);
-
-			if (_registeredTypes.Any(x => x.Key == _typeContext.Contract))
-				_registeredTypes[_typeContext.Contract].Add(_concreteType);
-			else
-				_registeredTypes.Add(_typeContext.Contract, _typeContext.Concrete);
-
-			return new IocLifeCycleBuilder(_iocBuilder);
+			if (_registeredTypes.ContainsKey(_typeContext.Contract))
+				return AddConcreteType(concreteType);
+			
+			_registeredTypes.Add(_typeContext.Contract, _typeContext.Concrete);
+			return new IocConcreteBuilder(_iocBuilder, _typeContext);
 		}
+
+		public void AsSingleton()
+		{
+			_typeContext.Concrete.ForEach(x => x.LifeCycle = LifeCycle.Singleton);
+		}
+
+		public void AsTransient()
+		{
+			_typeContext.Concrete.ForEach(x => x.LifeCycle = LifeCycle.Transient);
+		}
+
+		public void PerRequest()
+		{
+			_typeContext.Concrete.ForEach(x => x.LifeCycle = LifeCycle.PerRequest);
+		}
+
+		private IocConcreteBuilder AddConcreteType(ConcreteType concreteType)
+		{
+			var registeredType = _registeredTypes[_typeContext.Contract];
+
+			if (registeredType.Any(x => x.Type == concreteType.Type))
+				throw new Exception(string.Format("The concrete type has already been registered: {0}", concreteType.Type));
+
+			registeredType.Add(concreteType);
+			return new IocConcreteBuilder(_iocBuilder, _typeContext);
+		}
+
 	}
 }
