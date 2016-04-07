@@ -53,13 +53,10 @@ namespace IoC.Container
 
 		private IEnumerable ResolveList(IEnumerable<ConcreteType> concreteTypes, Type type)
 		{
-			var concrete = new List<object>();
+			var a = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type.GetGenericArguments()));
+
 			foreach (var implementation in concreteTypes)
-				concrete.Add(InvokeConstructor(implementation));
-
-			var a = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
-
-			a.Add(concrete);
+				a.Add(InvokeConstructor(implementation));
 
 			return a;
 		}
