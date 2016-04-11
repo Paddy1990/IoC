@@ -39,7 +39,7 @@ namespace IoC.Container
 		private object ResolveType(Type type)
 		{
 			if (type.IsGenericType && 
-				type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				typeof(IEnumerable).IsAssignableFrom(type))
 			{
 				var concreteTypes = GetConcreteTypes(type.GetGenericArguments().First());
 				return ResolveList(concreteTypes, type);
@@ -53,12 +53,12 @@ namespace IoC.Container
 
 		private IEnumerable ResolveList(IEnumerable<ConcreteType> concreteTypes, Type type)
 		{
-			var a = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type.GetGenericArguments()));
+			var concrete = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type.GetGenericArguments()));
 
 			foreach (var implementation in concreteTypes)
-				a.Add(InvokeConstructor(implementation));
+				concrete.Add(InvokeConstructor(implementation));
 
-			return a;
+			return concrete;
 		}
 
 		private object InvokeConstructor(ConcreteType concreteType)

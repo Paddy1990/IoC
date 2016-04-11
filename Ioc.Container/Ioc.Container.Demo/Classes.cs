@@ -8,7 +8,7 @@ namespace IoC.Container.Demo
 		private readonly IEnumerable<IClass2> _class2;
 		private readonly IClass3 _class3;
 
-		public Class1(IEnumerable<IClass2> class2, IClass3 class3)
+		public Class1(ICollection<IClass2> class2, IClass3 class3)
 		{
 			_class2 = class2;
 			_class3 = class3;
